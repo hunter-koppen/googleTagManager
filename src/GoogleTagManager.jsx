@@ -1,8 +1,28 @@
+import { InitializeGTM } from "./components/InitializeGTM";
 import { createElement } from "react";
 
-import { HelloWorldSample } from "./components/HelloWorldSample";
-import "./ui/GoogleTagManager.css";
-
-export function GoogleTagManager({ sampleText }) {
-    return <HelloWorldSample sampleText={sampleText} />;
+export function GoogleTagManager({
+    measurementID,
+    sendCustomProps,
+    pageViewEventName,
+    sendPageTitle,
+    sendModuleLocation,
+    sendPageURL,
+    sendSessionID,
+    sendAdditionalProps,
+    additionalProps
+}) {
+    return (
+        <InitializeGTM
+            measurementID={measurementID}
+            sendCustomProps={sendCustomProps}
+            pageViewEventName={pageViewEventName}
+            sendPageTitle={sendPageTitle}
+            sendModuleLocation={sendModuleLocation}
+            sendPageURL={sendPageURL}
+            sendSessionID={sendSessionID}
+            sendAdditionalProps={sendAdditionalProps}
+            additionalProps={additionalProps}
+        />
+    );
 }
