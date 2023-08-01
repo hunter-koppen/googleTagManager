@@ -14,9 +14,10 @@
     <icon />
     <properties>
         <propertyGroup caption="General">
-            <property key="measurementID" type="string">
-                <caption>Measurement ID</caption>
-                <description>ID of the container to which you are sending measurements.</description>
+            <property key="gtmId" type="expression" required="true">
+                <caption>GTM ID</caption>
+                <description>The GTM code you get from Google (e.g. GTM-MCDS5LM9).</description>
+                <returnType type="String" />
             </property>
             <property key="sendCustomProps" type="boolean" defaultValue="false">
                 <caption>Customized Page View?</caption>

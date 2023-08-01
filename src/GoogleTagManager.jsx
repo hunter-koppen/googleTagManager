@@ -2,7 +2,7 @@ import { InitializeGTM } from "./components/InitializeGTM";
 import { createElement } from "react";
 
 export function GoogleTagManager({
-    measurementID,
+    gtmId,
     sendCustomProps,
     pageViewEventName,
     sendPageTitle,
@@ -14,7 +14,7 @@ export function GoogleTagManager({
 }) {
     return (
         <InitializeGTM
-            measurementID={measurementID}
+            gtmId={gtmId}
             sendCustomProps={sendCustomProps}
             pageViewEventName={pageViewEventName}
             sendPageTitle={sendPageTitle}
