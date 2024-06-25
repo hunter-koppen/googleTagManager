@@ -1,21 +1,27 @@
 import TagManager from "react-gtm-module";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 export function InitializeGTM(props) {
     const initializedRef = useRef(false);
 
+    const checkDataAvailability = useCallback(() => {
+        if (props.gtmId.status !== "available") {
+            return false;
+        }
+
+        for (const object of props.additionalProps) {
+            if (object.propDataSource.status !== "available") {
+                return false;
+            }
+        }
+
+        return true;
+    }, [props.gtmId.status, props.additionalProps]);
+
     useEffect(() => {
         const initializeGTM = () => {
-            if (props.gtmId.status !== "available") {
-                // if the data is not yet available then we don't do anything
+            if (!checkDataAvailability()) {
                 return;
-            }
-
-            for (const object of props.additionalProps) {
-                if (object.propDataSource.status !== "available") {
-                    // if the data is not yet available then we don't do anything
-                    return;
-                }
             }
 
             // Initialize GTM script only once
@@ -28,15 +34,13 @@ export function InitializeGTM(props) {
             }
 
             const dataLayerStructure = () => {
-                let dataLayer = '{"event":"' + props.pageViewEventName + '",'; // initialize the dataLayer variable
+                let dataLayer = '{"event":"' + props.pageViewEventName + '",';
 
                 if (props.sendPageTitle) {
-                    // send page title
                     dataLayer += '"Page Name":"' + mx.ui.getContentForm().title + '",';
                 }
 
                 if (props.sendModuleLocation) {
-                    // send module location
                     const modulePath = mx.ui.getContentForm().path;
                     // eslint-disable-next-line
                     const moduleLocation = function (modPath) {
@@ -48,7 +52,6 @@ export function InitializeGTM(props) {
                 }
 
                 if (props.sendPageURL) {
-                    // send page URL
                     let pageURL;
                     if (mx.ui.getContentForm().url !== null) {
                         pageURL = window.location.origin + mx.ui.getContentForm().url;
@@ -70,14 +73,11 @@ export function InitializeGTM(props) {
                 }
 
                 if (props.sendSessionID) {
-                    // send session ID
                     dataLayer += '"Session ID":"' + mx.session.getSessionObjectId() + '",';
                 }
 
                 if (props.sendAdditionalProps) {
-                    // send additional properties
                     let expressionResult = "";
-
                     for (const line of props.additionalProps) {
                         for (const object of line.propDataSource.items) {
                             // object is an item in the list that is returned from the data source
@@ -96,18 +96,11 @@ export function InitializeGTM(props) {
             };
 
             const dataLayer = dataLayerStructure(props);
-
-            // Update the data layer with the latest information
             TagManager.dataLayer({ dataLayer });
-
-            mx.ga4Connected = true; // We have sent the page hit, now toggle the switch off to avoid sending duplicates
         };
 
-        const origOnNavigation = mx.ui.getContentForm().onNavigation; // save what the original onNavigation function did
         mx.ui.getContentForm().onNavigation = () => {
             initializeGTM();
-            // Original Actions
-            origOnNavigation();
         };
 
         initializeGTM(); // Initialize once on load
@@ -120,7 +113,7 @@ export function InitializeGTM(props) {
         props.sendPageURL,
         props.sendSessionID,
         props.sendAdditionalProps
-    ]); // dependency array to avoid unnecessary loops
+    ]);
 
     return null;
 }
